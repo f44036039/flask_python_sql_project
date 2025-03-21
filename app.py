@@ -1,4 +1,4 @@
-import pymysql # type: ignore
+import pymysql # mysql-connector-python has import issues
 con = pymysql.connect(
     user = "root",
     password = "12345678",
