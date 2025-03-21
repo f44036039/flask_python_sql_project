@@ -1,5 +1,5 @@
-import mysql.connector # type: ignore
-con = mysql.connector.connect(
+import pymysql # type: ignore
+con = pymysql.connect(
     user = "root",
     password = "12345678",
     host = "localhost",
@@ -29,8 +29,8 @@ def signup():
     cursor.execute("select * from member_data where email = %s", (email, ))
 
     result = cursor.fetchall()
-    # print(result)
-    if result == []:
+    print(result)
+    if len(result) == 0:
         cursor.execute("insert into member_data(nickname, email, password) values(%s, %s, %s)", (nickname, email, password))
         print("list is null")       
     else:

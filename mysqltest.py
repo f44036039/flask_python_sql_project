@@ -1,5 +1,5 @@
-import mysql.connector # type: ignore
-con = mysql.connector.connect(
+import pymysql # type: ignore
+con = pymysql.connect(
     user = "root",
     password = "12345678",
     host = "localhost",
