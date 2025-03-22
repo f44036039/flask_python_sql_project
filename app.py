@@ -1,12 +1,12 @@
 import pymysql # mysql-connector-python has import issues
-con = pymysql.connect(
+con = pymysql.connect(       # mysql.connector.connect
     user = "root",
     password = "12345678",
     host = "localhost",
     database = "mydb",
 )
 print("success")
-cursor = con.cursor()
+
 
 from flask import *
 app = Flask(
@@ -20,25 +20,6 @@ app.secret_key = "any string but secert"
 def index():
     return render_template("index.html")
 
-@app.route("/signup", methods = ["POST"])
-def signup():
-    nickname = request.form["nickname"]
-    email = request.form["email"]
-    password = request.form["password"]
-
-    cursor.execute("select * from member_data where email = %s", (email, ))
-
-    result = cursor.fetchall()
-    print(result)
-    if len(result) == 0:
-        cursor.execute("insert into member_data(nickname, email, password) values(%s, %s, %s)", (nickname, email, password))
-        print("list is null")       
-    else:
-        return redirect("/error?msg=已被註冊")
-
-    con.commit()
-    return redirect("/")
-
 @app.route("/member")
 def member():
     return render_template("member.html")
@@ -48,4 +29,38 @@ def error():
     message = request.args.get("msg", "發生錯誤")
     return render_template("error.html", message = message)
 
+@app.route("/signup", methods = ["POST"])
+def signup():
+    nickname = request.form["nickname"]
+    email = request.form["email"]
+    password = request.form["password"]
+
+    cursor = con.cursor()
+    cursor.execute("select * from member_data where email = %s", (email, ))
+
+    result = cursor.fetchall()
+    # print(result)
+    if len(result) == 0:
+        cursor.execute("insert into member_data(nickname, email, password) values(%s, %s, %s)", (nickname, email, password))
+        print("list is null")       
+    else:
+        return redirect("/error?msg=已被註冊")
+
+    con.commit()
+    return redirect("/")
+
+@app.route("/signin", methods = ["POST"])
+def signin():
+    email = request.form["email"]
+    password = request.form["password"]
+
+    cursor = con.cursor()
+    cursor.execute("select * from member_data where email = %s and password = %s", (email, password))
+
+    result = cursor.fetchall()
+    #print (result)
+    if len(result) == 0:
+        return redirect("/error?msg=帳號或密碼輸入錯誤")
+    else:
+        return redirect("/member")
 app.run()
