@@ -5,7 +5,7 @@ con = pymysql.connect(       # mysql.connector.connect
     host = "localhost",
     database = "mydb",
 )
-print("success")
+# print("success")
 
 
 from flask import *
@@ -22,7 +22,11 @@ def index():
 
 @app.route("/member")
 def member():
-    return render_template("member.html")
+    # print(session)
+    if "nickname" in session:
+        return render_template("member.html")
+    else:
+        return redirect("/")
 
 @app.route("/error")
 def error():
@@ -58,9 +62,17 @@ def signin():
     cursor.execute("select * from member_data where email = %s and password = %s", (email, password))
 
     result = cursor.fetchall()
-    #print (result)
+    # print (result)
     if len(result) == 0:
         return redirect("/error?msg=帳號或密碼輸入錯誤")
     else:
+        session["nickname"] = result[0][0]
+        print(session)
         return redirect("/member")
+    
+@app.route("/signout")
+def signout():
+    del session["nickname"]
+    return redirect("/")
+
 app.run()
