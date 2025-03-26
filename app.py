@@ -43,14 +43,16 @@ def signup():
     cursor.execute("select * from member_data where email = %s", (email, ))
 
     result = cursor.fetchall()
+    con.commit()
     # print(result)
     if len(result) == 0:
         cursor.execute("insert into member_data(nickname, email, password) values(%s, %s, %s)", (nickname, email, password))
+        con.commit()
         print("list is null")       
     else:
         return redirect("/error?msg=已被註冊")
 
-    con.commit()
+    
     return redirect("/")
 
 @app.route("/signin", methods = ["POST"])
@@ -62,6 +64,7 @@ def signin():
     cursor.execute("select * from member_data where email = %s and password = %s", (email, password))
 
     result = cursor.fetchall()
+    con.commit()
     # print (result)
     if len(result) == 0:
         return redirect("/error?msg=帳號或密碼輸入錯誤")
